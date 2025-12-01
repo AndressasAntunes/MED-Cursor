@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle Financeiro - Home</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            padding: 30px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .saldo-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .saldo-container h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+        
+        .saldo-valor {
+            font-size: 36px;
+            font-weight: bold;
+        }
+        
+        .saldo-positivo {
+            color: #4ade80;
+        }
+        
+        .saldo-negativo {
+            color: #f87171;
+        }
+        
+        .btn-adicionar {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            transition: background 0.3s;
+        }
+        
+        .btn-adicionar:hover {
+            background: #059669;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        thead {
+            background: #f3f4f6;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        th {
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        tbody tr:hover {
+            background: #f9fafb;
+        }
+        
+        .receita {
+            color: #10b981;
+            font-weight: 600;
+        }
+        
+        .despesa {
+            color: #ef4444;
+            font-weight: 600;
+        }
+        
+        .btn-excluir {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.3s;
+        }
+        
+        .btn-excluir:hover {
+            background: #dc2626;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            table {
+                font-size: 14px;
+            }
+            
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💰 Controle Financeiro Pessoal</h1>
+        
+        <div class="saldo-container">
+            <h2>Saldo Total</h2>
+            <div class="saldo-valor {% if saldo_total >= 0 %}saldo-positivo{% else %}saldo-negativo{% endif %}">
+                R$ {{ saldo_total|floatformat:2 }}
+            </div>
+        </div>
+        
+        <a href="{% url 'adicionar_transacao' %}" class="btn-adicionar">+ Adicionar Transação</a>
+        
+        <div class="table-container">
+            {% if transacoes %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Descrição</th>
+                        <th>Valor</th>
+                        <th>Tipo</th>
+                        <th>Data</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transacao in transacoes %}
+                    <tr>
+                        <td>{{ transacao.descricao }}</td>
+                        <td class="{% if transacao.tipo == 'RECEITA' %}receita{% else %}despesa{% endif %}">
+                            R$ {{ transacao.valor|floatformat:2 }}
+                        </td>
+                        <td>
+                            <span class="{% if transacao.tipo == 'RECEITA' %}receita{% else %}despesa{% endif %}">
+                                {{ transacao.get_tipo_display }}
+                            </span>
+                        </td>
+                        <td>{{ transacao.data|date:"d/m/Y" }}</td>
+                        <td>
+                            <form method="post" action="{% url 'excluir_transacao' transacao.pk %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-excluir" onclick="return confirm('Tem certeza que deseja excluir esta transação?');">
+                                    Excluir
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <p>Nenhuma transação cadastrada ainda.</p>
+                <p>Clique em "Adicionar Transação" para começar!</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
+

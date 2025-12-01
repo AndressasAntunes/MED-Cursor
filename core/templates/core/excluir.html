@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excluir Transação - Controle Financeiro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            padding: 30px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .transacao-info {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .transacao-info p {
+            margin-bottom: 10px;
+            color: #374151;
+        }
+        
+        .transacao-info strong {
+            color: #111827;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+        }
+        
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗑️ Excluir Transação</h1>
+        
+        <div class="transacao-info">
+            <p><strong>Descrição:</strong> {{ transacao.descricao }}</p>
+            <p><strong>Valor:</strong> R$ {{ transacao.valor|floatformat:2 }}</p>
+            <p><strong>Tipo:</strong> {{ transacao.get_tipo_display }}</p>
+            <p><strong>Data:</strong> {{ transacao.data|date:"d/m/Y" }}</p>
+        </div>
+        
+        <p style="margin-bottom: 20px; color: #6b7280; text-align: center;">
+            Tem certeza que deseja excluir esta transação?
+        </p>
+        
+        <form method="post" style="margin-bottom: 10px;">
+            {% csrf_token %}
+            <div class="btn-group">
+                <button type="submit" class="btn btn-danger">Sim, Excluir</button>
+                <a href="{% url 'home' %}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
+
